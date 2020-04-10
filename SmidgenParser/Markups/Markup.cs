@@ -1,67 +1,102 @@
-﻿using System.Collections.Generic;
+﻿using SmidgenParser.Milestones;
+using System;
+using System.Collections.Generic;
 
 namespace SmidgenParser.Markups
 {
     public abstract class Markup
     {
+        public static Markup CreateMarkup(MarkupTypes mType)
+        {
+            switch (mType)
+            {
+                case MarkupTypes.bold:
+                    return new Bold();
+                case MarkupTypes.italic:
+                    throw new Exception("Markup not implemented.");
+                    break;
+                case MarkupTypes.underline:
+                    throw new Exception("Markup not implemented.");
+                    break;
+                case MarkupTypes.strikethrough:
+                    throw new Exception("Markup not implemented.");
+                    break;
+                case MarkupTypes.link:
+                    return new Link();
+                default:
+                    throw new Exception("Markup not implemented.");
+                    break;
+            }
+        }
+
+        /// <summary>
+        /// What type of markup
+        /// </summary>
+        public abstract MarkupTypes Type { get; }
+
         /// <summary>
         /// Allow other markups to be embedded within this markup's output
         /// </summary>
         public abstract bool AllowEmbedded { get; }
 
+        protected bool _successful;
         /// <summary>
         /// Markup concluded successfully
         /// </summary>
-        public abstract bool Successful { get; }
-
-        /// <summary>
-        /// Markup failed to match pattern
-        /// </summary>
-        public abstract bool Failed { get; }
-
-        /// <summary>
-        /// Character that triggers initialization for markup
-        /// </summary>
-        public abstract char Trigger { get; }
+        public bool Successful { get { return _successful; } }
 
         protected int _currentMilestone;
 
-        protected List<char> _initializeChars;
-
         protected List<char> _charCache = new List<char>();
 
+        protected List<Milestone> _milestones;
 
         public abstract string GetOutput(string input);
-        public abstract bool Digest(char input);
-        protected abstract bool TriggerFailure();
-        protected abstract bool TriggerCompletion();
-
-        protected void CheckInput(char input, char nextMilestone)
+        protected void TriggerFailure()
         {
-            switch (nextMilestone)
+           
+        }
+        protected void TriggerCompletion()
+        {
+            _successful = true;
+        }
+
+        public void Digest(char input)
+        {
+            Milestone current = _milestones[_currentMilestone];
+            bool matched = current.Match(input);
+            
+            if (matched)
             {
-                case 't':
-                    if (char.IsLetterOrDigit(input))
+                current.Satisfy();
+                if (!current.Repeating)
+                    AdvanceMilestone();
+            }
+            else if (current.Satisfied && current.Repeating)
+            {
+                Milestone next = _milestones[_currentMilestone + 1];
+                bool nextMatched = next.Match(input);
+                if (nextMatched)
+                {
+                    AdvanceMilestone();
+                    next.Satisfy();
+                    if (!Successful)
                         AdvanceMilestone();
-                    break;
-                case 'w':
-                    if (char.IsWhiteSpace(input))
-                        AdvanceMilestone();
-                    break;
-                case 'r':
-                    if (input == '\n' || input == '\r')
-                        AdvanceMilestone();
-                    break;
-                default:
-                    if (input == nextMilestone)
-                        AdvanceMilestone();
-                    break;
+                }
             }
         }
 
         protected void AdvanceMilestone()
         {
-            _currentMilestone++;
+            if (FinalMilestone())
+                TriggerCompletion();
+            else
+                _currentMilestone++;
+        }
+
+        protected bool FinalMilestone()
+        {
+            return (_currentMilestone == _milestones.Count);
         }
     }
 }
