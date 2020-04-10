@@ -1,30 +1,29 @@
 {
   "format": 1,
   "restore": {
-    "C:\\Users\\Eric\\source\\repos\\SmidgenParser\\SmidgenParser\\SmidgenParser.csproj": {}
+    "/Users/emargules/Documents/git/SmidgenParser/SmidgenParser/SmidgenParser.csproj": {}
   },
   "projects": {
-    "C:\\Users\\Eric\\source\\repos\\SmidgenParser\\SmidgenParser\\SmidgenParser.csproj": {
+    "/Users/emargules/Documents/git/SmidgenParser/SmidgenParser/SmidgenParser.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "C:\\Users\\Eric\\source\\repos\\SmidgenParser\\SmidgenParser\\SmidgenParser.csproj",
+        "projectUniqueName": "/Users/emargules/Documents/git/SmidgenParser/SmidgenParser/SmidgenParser.csproj",
         "projectName": "SmidgenParser",
-        "projectPath": "C:\\Users\\Eric\\source\\repos\\SmidgenParser\\SmidgenParser\\SmidgenParser.csproj",
-        "packagesPath": "C:\\Users\\Eric\\.nuget\\packages\\",
-        "outputPath": "C:\\Users\\Eric\\source\\repos\\SmidgenParser\\SmidgenParser\\obj\\",
+        "projectPath": "/Users/emargules/Documents/git/SmidgenParser/SmidgenParser/SmidgenParser.csproj",
+        "packagesPath": "/Users/emargules/.nuget/packages/",
+        "outputPath": "/Users/emargules/Documents/git/SmidgenParser/SmidgenParser/obj/",
         "projectStyle": "PackageReference",
         "fallbackFolders": [
-          "C:\\Program Files\\dotnet\\sdk\\NuGetFallbackFolder"
+          "/usr/local/share/dotnet/sdk/NuGetFallbackFolder"
         ],
         "configFilePaths": [
-          "C:\\Users\\Eric\\AppData\\Roaming\\NuGet\\NuGet.Config",
-          "C:\\Program Files (x86)\\NuGet\\Config\\Microsoft.VisualStudio.Offline.config"
+          "/Users/emargules/.config/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "netcoreapp3.1"
         ],
         "sources": {
-          "C:\\Program Files (x86)\\Microsoft SDKs\\NuGetPackages\\": {},
+          "/Users/emargules/Projects/FirstDataGateway/FirstDataGateway": {},
           "https://api.nuget.org/v3/index.json": {}
         },
         "frameworks": {
@@ -55,7 +54,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "C:\\Program Files\\dotnet\\sdk\\3.1.201\\RuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/3.1.102/RuntimeIdentifierGraph.json"
         }
       }
     }
