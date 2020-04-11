@@ -1,12 +1,13 @@
 ﻿namespace SmidgenParser.Milestones
 {
-    public class RepeatingWildcard : Wildcard
+    public class RepeatingWildcardFailure : WildcardFailure
     {
+
         protected new bool _repeating = true;
         protected int _requiredReps;
         protected int _currentReps;
 
-        public RepeatingWildcard(char character, int requiredReps = 0) : base(character) 
+        public RepeatingWildcardFailure(char character, int requiredReps = 0) : base(character)
         {
             _requiredReps = requiredReps;
         }
@@ -43,6 +44,10 @@
                 _currentReps++;
                 if (_currentReps >= _requiredReps)
                     Satisfy();
+            } else
+            {
+                if (_currentReps != 0)
+                    Reset();
             }
 
             return match;

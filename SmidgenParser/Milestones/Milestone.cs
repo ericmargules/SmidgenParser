@@ -16,12 +16,18 @@
             _character = character;
         }
 
-        public bool Match(char input)
+        public MatchTypes Match(char input)
         {
-            return input == _character;
+            if (input == _character)
+            {
+                Satisfy();
+                return MatchTypes.exact;
+            }
+
+            return MatchTypes.none;
         }
 
-        public void Satisfy()
+        protected void Satisfy()
         {
             if (!_satisfied)
                 _satisfied = true;

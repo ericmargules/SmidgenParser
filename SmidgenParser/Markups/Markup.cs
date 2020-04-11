@@ -51,11 +51,10 @@ namespace SmidgenParser.Markups
 
         protected List<Milestone> _milestones;
 
+        protected List<Milestone> _failTriggers;
+
         public abstract string GetOutput(string input);
-        protected void TriggerFailure()
-        {
-           
-        }
+
         protected void TriggerCompletion()
         {
             _successful = true;
@@ -63,27 +62,54 @@ namespace SmidgenParser.Markups
 
         public void Digest(char input)
         {
-            Milestone current = _milestones[_currentMilestone];
-            bool matched = current.Match(input);
-            
-            if (matched)
+            // Digest does the following
+            // Checks provided input against failure conditions
+            // Checks if input matches current milestone
+            // If input matches
+            //   Adds input to charCache
+            //   Determines if complete
+            //   Determines if changes to milestones are required 
+            // If input !matches
+            //   Checks if repeating pattern is found
+            //   Fails markup and resets
+
+            if (_currentMilestone > 0)
             {
-                current.Satisfy();
+                if (CheckFailures(input))
+                {
+                    Reset();
+                    return;
+                }
+            }
+
+            Milestone current = _milestones[_currentMilestone];
+            MatchTypes matched = current.Match(input);
+            
+            if (matched != MatchTypes.none)
+            {
                 if (!current.Repeating)
                     AdvanceMilestone();
             }
             else if (current.Satisfied && current.Repeating)
             {
-                Milestone next = _milestones[_currentMilestone + 1];
-                bool nextMatched = next.Match(input);
-                if (nextMatched)
+                MatchTypes nextMatched = CheckMilestone(_currentMilestone + 1, input);
+                if (nextMatched != MatchTypes.none)
                 {
                     AdvanceMilestone();
-                    next.Satisfy();
                     if (!Successful)
                         AdvanceMilestone();
                 }
+            } else
+            {
+                Reset();
             }
+
+        }
+
+        protected MatchTypes CheckMilestone(int milestoneIdx, char input)
+        {
+            Milestone milestone = _milestones[milestoneIdx];
+            return milestone.Match(input);
         }
 
         protected void AdvanceMilestone()
@@ -97,6 +123,39 @@ namespace SmidgenParser.Markups
         protected bool FinalMilestone()
         {
             return (_currentMilestone == _milestones.Count);
+        }
+
+        protected bool CheckFailures(char input)
+        {
+            bool result = false;
+
+            foreach (Milestone trigger in _failTriggers)
+            {
+                MatchTypes match = trigger.Match(input);
+                if (match != MatchTypes.none)
+                {
+                    if (trigger.Satisfied)
+                        result = true;
+                }
+            }
+
+            return result;
+        }
+
+        protected void Reset()
+        {
+            foreach (Milestone milestone in _milestones)
+            {
+                milestone.Reset();
+            }
+
+            foreach (Milestone milestone in _failTriggers)
+            {
+                milestone.Reset();
+            }
+            _charCache.Clear();
+            _currentMilestone = default;
+            _successful = default;
         }
     }
 }

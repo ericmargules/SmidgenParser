@@ -23,6 +23,11 @@ namespace SmidgenParser.Markups
                 new RepeatingWildcard('s'),
                 new Milestone(')')
             };
+
+            _failTriggers = new List<Milestone>
+            {
+                new RepeatingWildcardFailure('r', 2)
+            };
         }
         public override string GetOutput(string input)
         {

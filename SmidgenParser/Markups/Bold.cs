@@ -16,9 +16,15 @@ namespace SmidgenParser.Markups
         public Bold()
         {
             _milestones = new List<Milestone> {
-                new Milestone('*'),
+                new RepeatingMilestone('*', 2),
+                new Wildcard('t'),
                 new RepeatingWildcard('s'),
-                new Milestone('*'),
+                new RepeatingMilestone('*', 2),
+            };
+
+            _failTriggers = new List<Milestone>
+            {
+                new RepeatingWildcardFailure('r', 2)
             };
         }
 

@@ -2,14 +2,15 @@
 
 namespace SmidgenParser.Milestones
 {
-    class Wildcard : Milestone
+    public class Wildcard : Milestone
     {
         // Wildcard char values:
-        // s = text
+        // t = text
+        // s = text or whitespace
         // w = whitespace
         // r = carriage return
 
-        private List<char> _excludedChars = new List<char>();
+        protected List<char> _excludedChars = new List<char>();
 
         public Wildcard(char character) : base(character) { }
 
@@ -18,32 +19,40 @@ namespace SmidgenParser.Milestones
             _excludedChars.Add(character);
         }
 
-        public new bool Match(char input)
+        public new MatchTypes Match(char input)
         {
-            bool match = false;
-
+            MatchTypes match = MatchTypes.none;
             switch (_character)
             {
+                case 't':
+                    if (!char.IsWhiteSpace(input) && !IsExcludedCharacter(input))
+                        match = MatchTypes.text;
+                    break;
                 case 's':
                     if (!char.IsWhiteSpace(input) && !IsExcludedCharacter(input))
-                        match = true;
+                        return MatchTypes.text;
+                    if (char.IsWhiteSpace(input) && !IsExcludedCharacter(input))
+                        match = MatchTypes.whitespace;
                     break;
                 case 'w':
                     if (char.IsWhiteSpace(input) && !IsExcludedCharacter(input))
-                        match = true;
+                        match = MatchTypes.whitespace;
                     break;
                 case 'r':
-                    if ((input == '\r' || input == '\n') && !IsExcludedCharacter(input))
-                        match = true;
-                    break;
-                default:
+                    if (input == '\r' && !IsExcludedCharacter(input))
+                        return MatchTypes.carriagereturn;
+                    if (input == '\n' && !IsExcludedCharacter(input))
+                        match = MatchTypes.newline;
                     break;
             }
+
+            if (match != MatchTypes.none)
+                Satisfy();
 
             return match;
         }
 
-        private bool IsExcludedCharacter(char input)
+        protected bool IsExcludedCharacter(char input)
         {
             bool match = false;
             foreach (char exclusion in _excludedChars)
