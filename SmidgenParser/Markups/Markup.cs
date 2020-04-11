@@ -51,7 +51,7 @@ namespace SmidgenParser.Markups
 
         protected List<Milestone> _milestones;
 
-        protected List<Milestone> _failTriggers;
+        protected List<Failure> _failTriggers;
 
         public abstract string GetOutput(string input);
 
@@ -85,9 +85,9 @@ namespace SmidgenParser.Markups
             Milestone current = _milestones[_currentMilestone];
             MatchTypes matched = current.Match(input);
             
-            if (matched != MatchTypes.none)
+            if (matched != MatchTypes.none && current.Satisfied)
             {
-                if (!current.Repeating)
+                if (!current.Repeating || (current.Repeating && current.RequiredReps > 0))
                     AdvanceMilestone();
             }
             else if (current.Satisfied && current.Repeating)
@@ -129,7 +129,7 @@ namespace SmidgenParser.Markups
         {
             bool result = false;
 
-            foreach (Milestone trigger in _failTriggers)
+            foreach (Failure trigger in _failTriggers)
             {
                 MatchTypes match = trigger.Match(input);
                 if (match != MatchTypes.none)
@@ -149,9 +149,9 @@ namespace SmidgenParser.Markups
                 milestone.Reset();
             }
 
-            foreach (Milestone milestone in _failTriggers)
+            foreach (Failure failure in _failTriggers)
             {
-                milestone.Reset();
+                failure.Reset();
             }
             _charCache.Clear();
             _currentMilestone = default;

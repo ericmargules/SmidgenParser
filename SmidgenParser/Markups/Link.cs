@@ -16,16 +16,16 @@ namespace SmidgenParser.Markups
         {
             _milestones = new List<Milestone> {
                 new Milestone('['),
-                new RepeatingWildcard('s'),
+                new Wildcard('s', 0),
                 new Milestone(']'),
                 new Milestone('('),
-                new RepeatingWildcard('s'),
+                new Wildcard('s', 0),
                 new Milestone(')')
             };
 
-            _failTriggers = new List<Milestone>
+            _failTriggers = new List<Failure>
             {
-                new RepeatingWildcardFailure('r', 2)
+                new WildcardFailure('r', 2)
             };
         }
         public override string GetOutput(string input)

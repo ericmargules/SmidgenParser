@@ -12,7 +12,7 @@ namespace SmidgenParser.Milestones
 
         protected List<char> _excludedChars = new List<char>();
 
-        public Wildcard(char character) : base(character) { }
+        public Wildcard(char character, int requiredReps = 1) : base(character, requiredReps) { }
 
         public void ExcludeCharacter(char character)
         {
@@ -47,7 +47,11 @@ namespace SmidgenParser.Milestones
             }
 
             if (match != MatchTypes.none)
-                Satisfy();
+            {
+                _currentReps++;
+                if (_currentReps >= _requiredReps)
+                    Satisfy();
+            }
 
             return match;
         }
